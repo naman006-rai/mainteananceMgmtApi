@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,12 +24,15 @@ public class MainteananceServiceImpl implements MainteananceService{
 	  @Autowired
 	  private DataRepo dataRepo;
 
+		@Value("${society-service.hostname}")
+		private String societServiceHostname;
+
 	@Override
 	public MainteanceInfo insertResident(MainteanceInfo mainteanceInfo) {
 		HttpHeaders headers = new HttpHeaders();
 	      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 	      HttpEntity <String> entity = new HttpEntity<String>(headers);
-		 String ownerData = restTemplate.exchange("http://localhost:9091/society/residents/"+mainteanceInfo.getOwner(), HttpMethod.GET, entity, String.class).getBody();
+		 String ownerData = restTemplate.exchange("http://"+societServiceHostname+":9091/society/residents/"+mainteanceInfo.getOwner(), HttpMethod.GET, entity, String.class).getBody();
 		if(ownerData!=null) {
 			 return dataRepo.save(mainteanceInfo);
 		}
