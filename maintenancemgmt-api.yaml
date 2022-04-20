@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: exampleapp
+  name: maintenancemgmt-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exampleapp
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: exampleapp
+    spec:
+      hostname: maintenancemgmt-api
+      restartPolicy: Always
+      containers:
+        - image: sezg583-assignment-maintenancemgmt
+          name: sezg583-assignment-maintenancemgmt
+          env:
+            - name: SOCIETY_SERVICE_HOSTNAME
+              value: societymgmt-api-service.default
+          ports:
+            - containerPort: 9092
+          resources: {}
+          imagePullPolicy: Never
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: maintenancemgmt-api-service
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: exampleapp
+  ports:
+    - port: 9092
+      targetPort: 9092
+      nodePort: 30002
